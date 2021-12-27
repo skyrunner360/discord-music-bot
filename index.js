@@ -27,7 +27,7 @@ if(command === "play" || "p"){
 if(command === "stop" || "s"){
     const bot = message.guild.members.cache.get(client.user.id);
     if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
-    if(bot.voice.channel != message.member.voice.channel) return message.channel.send(":kiss: Uhh! Master Chief you are not in the same voice channel as me. Please cum inn chief!");
+    if(bot.voice.channel != message.member.voice.channel) return message.channel.send(":kiss: Uhh! Master Chief you are not in the same voice channel as me. Please come in chief!");
     distube.stop(message);
     message.channel.send(":kiss: I stopped the music as per your request Master Chief!")
 }
