@@ -2,11 +2,14 @@ const Discord = require("discord.js");
 const { Client, Intents } = require('discord.js');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const DisTube = require("distube");
-const distube = new DisTube.default(client, {
+const distube = new DisTube.default(client,
+  {
     searchSongs: 1,
     emitNewSongOnly: true,
-    leaveOnFinish: true
-});
+    // leaveOnFinish: true
+    
+}
+);
 const { token } = require("./info.json");
 const prefix = "-";
 
@@ -14,23 +17,16 @@ client.on("ready", () => {
   console.log(`${client.user.tag} Has logged in`);
 });
 
+client.on('error', (channel, error) => {
+	console.error(error)
+	channel.send(`An error encoutered: ${error.slice(0, 1979)}`) // Discord limits 2000 characters in a message
+})
+
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const command = args.shift();
-if(command === "play" || "p"){
-    if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
-    if(!args[0]) return message.channel.send(":kiss: Uhh! Master Chief you should tell me what to play!!");
-    distube.play(message,args.join(' '));
-}
-if(command === "stop" || "s"){
-    const bot = message.guild.members.cache.get(client.user.id);
-    if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
-    if(bot.voice.channel != message.member.voice.channel) return message.channel.send(":kiss: Uhh! Master Chief you are not in the same voice channel as me. Please cum inn chief!");
-    distube.stop(message);
-    message.channel.send(":kiss: I stopped the music as per your request Master Chief!")
-}
 
   // Queue status template
   const status = (queue) =>
@@ -76,7 +72,19 @@ if(command === "stop" || "s"){
           .join("\n")}\n*Enter anything else or wait 30 seconds to cancel*`
       );
     });
+    if(["play","p"].includes(command)){
+      if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
+      if(!args[0]) return message.channel.send(":kiss: Uhh! Master Chief you should tell me what to play!!");
+      distube.play(message,args.join(' '));      
 
+  }
+  if(["stop","s"].includes(command)){
+      const bot = message.guild.members.cache.get(client.user.id);
+      if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
+      if(bot.voice.channel != message.member.voice.channel) return message.channel.send(":kiss: Uhh! Master Chief you are not in the same voice channel as me. Please cum inn chief!");
+      distube.stop(message);
+      message.channel.send(":kiss: I stopped the music as per your command Master Chief!")
+  }
 });
 
 client.login(token);
