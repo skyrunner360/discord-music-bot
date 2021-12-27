@@ -72,8 +72,14 @@ client.on("messageCreate", async (message) => {
           .join("\n")}\n*Enter anything else or wait 30 seconds to cancel*`
       );
     });
+const voiceChannel = message.member.voice.channel;
     if(["play","p"].includes(command)){
       if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
+      const permissions = voiceChannel.permissionsFor(message.client.user);
+      if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+      return message.channel.send(
+      "I need the permissions to join and speak in your voice channel!"
+    );
       if(!args[0]) return message.channel.send(":kiss: Uhh! Master Chief you should tell me what to play!!");
       distube.play(message,args.join(' '));      
 
