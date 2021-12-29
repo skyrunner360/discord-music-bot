@@ -67,10 +67,7 @@ To initialize "/" commands Deploy the Bot's commands using "!deploy"
 
 Rehan Shivani && Rishi Mathur [https://teriyakiboy98.github.io/WhoAmI/]
 
-## Support me and maybe watch me stream
+## Support me and maybe watch my stream
 
 [https://streamelements.com/teriyakiboy98/tip]
 
-## License
-
-This project is licensed under the 
