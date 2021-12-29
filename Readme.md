@@ -21,7 +21,7 @@ A discord bot that plays music on your discord server.
 
 To initialize "/" commands Deploy the Bot's commands using "!deploy"
 
-## PLaying Commands
+## Commands to play music
 
 * Play music from YouTube via url
 
