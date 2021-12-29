@@ -9,7 +9,6 @@ A discord bot that plays music on your discord server.
 * [Common errors](#common-errors)
 * [Contributing](#contributing)
 * [Author](#author)
-* [License](#license)
 
 ## Requirements
 
