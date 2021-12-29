@@ -1,123 +1,99 @@
-const Discord = require("discord.js")
-// const { Client, Intents } = require('discord.js');
-const client = new Discord.Client(
-  // { intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES'] }
-  );
-const DisTube = require("distube")
-const distube = new DisTube(client,
-  {
-    searchSongs: true,
-    emitNewSongOnly: false,
-    // leaveOnFinish: true
-    leaveOnStop: false,
-    youtubeDL: true,
-    updateYouTubeDL: true,
-    emptyCooldown: 30
+const fs = require('fs');
+const Discord = require('discord.js');
+const Client = require('./client/Client');
+const config = require('./config.json');
+const {Player} = require('discord-player');
+
+const client = new Client();
+client.commands = new Discord.Collection();
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
 }
-);
-const { token } = require("./info.json");
-const prefix = '-';
 
-client.on("ready", () => {
-  console.log(`${client.user.tag} Has logged in`)
-})
+console.log(client.commands);
 
+const player = new Player(client);
 
-client.on("message", async (message) => {
-  if (message.author.bot) return;
-  if (!message.content.startsWith(prefix)) return;
-  const args = message.content.slice(prefix.length).trim().split(/ +/g);
-  const command = args.shift();
-
-  // Queue status template
-  const status = (queue) =>
-    `Volume: \`${queue.volume}%\` | Filter: \`${
-      queue.filters.join(", ") || "Off"
-    }\` | Loop: \`${
-      queue.repeatMode
-        ? queue.repeatMode === 2
-          ? "All Queue"
-          : "This Song"
-        : "Off"
-    }\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``
-
-  // DisTube event listeners, more in the documentation page
-  distube
-    .on("playSong", (queue, song) =>
-      queue.textChannel.send(
-        `:kiss: Playing \`${song.name}\` - \`${
-          song.formattedDuration
-        }\`\nRequested by: ${song.user.tag}\n${status(queue)}`
-      )
-    )
-    .on("addSong", (queue, song) =>
-      queue.textChannel.send(
-        `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user.tag}`
-      )
-    )
-    .on("addList", (queue, playlist) =>
-      queue.textChannel.send(
-        `Added \`${playlist.name}\` playlist (${
-          playlist.songs.length
-        } songs) to queue\n${status(queue)}`
-      )
-    )
-    // DisTubeOptions.searchSongs = true
-    .on("searchResult", (message, result) => {
-      let i = 0
-      message.channel.send(
-        `**Choose an option from below**\n${result
-          .map(
-            (song) => `**${++i}**. ${song.name} - \`${song.formattedDuration}\``
-          )
-          .join("\n")}\n*Enter anything else or wait 30 seconds to cancel*`
-      )
-    })
-    .on("searchCancel",(message)=>message.channel.send(`Searching Cancelled`))
-    .on("error",(message,e)=>{
-      console.error(e);
-      message.channel.send("An error Occured: " + e);
-    });
-    if(["play","p"].includes(command)){
-      if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
-      if(!args[0]) return message.channel.send(":kiss: Uhh! Master Chief you should tell me what to play!!");
-      distube.play(message,args.join(' '));
-
-  }
-  if(["stop","s"].includes(command)){
-      const bot = message.guild.members.cache.get(client.user.id);
-      if(!message.member.voice.channel) return message.channel.send(":kiss: uhh! Master Chief you should be in a voice channel to command me!");
-      if(bot.voice.channel != message.member.voice.channel) return message.channel.send(":kiss: Uhh! Master Chief you are not in the same voice channel as me. Please cum inn chief!");
-      distube.stop(message);
-      message.channel.send(":kiss: I stopped the music as per your command Master Chief!");
-  }  
-  if(command == "resume"){
-    distube.resume(message);
-    message.channel.send(":kiss: I resumed the previous playing song as per your command Chief!");
-  }
-  if(command == "playSkip"){
-    distube.playSkip(message, args.join(" "));
-    message.channel.send(":kiss: I skipped the current playing song and now playing the new song as per your command Chief!");
-  }
-  if(command == "pause"){
-    distube.pause(message);
-    message.channel.send(":kiss: I paused the current playing song as per your command Chief!");
-  }
-  if(["loop","repeat"].includes(command)){
-    let mode = distube.setRepeatMode(message,parseInt(args[0]));
-    mode = mode ? mode==2 ? "Repeat queue":"Repeat Song":"Off";
-    message.channel.send("Set repeat mode to: `"+mode+"`");
-  }
-  if(command=="queue"){
-    let queue = distube.getQueue(message);
-    message.channel.send('Current queue:\n' + queue.songs.map((song, id) =>
-        `**${id+1}**. [${song.name}](${song.url}) - \`${song.formattedDuration}\``
-    ).join("\n"));
-  }
-  distube.on("error",(message,e)=>{
-    console.error(e);
-    message.channel.send("An error Occured: " + e);
-  });
+player.on('error', (queue, error) => {
+  console.log(`[${queue.guild.name}] Error emitted from the queue: ${error.message}`);
 });
 
-client.login(token)
+player.on('connectionError', (queue, error) => {
+  console.log(`[${queue.guild.name}] Error emitted from the connection: ${error.message}`);
+});
+
+player.on('trackStart', (queue, track) => {
+  queue.metadata.send(`▶ | Started playing: **${track.title}** in **${queue.connection.channel.name}**!`);
+});
+
+player.on('trackAdd', (queue, track) => {
+  queue.metadata.send(`🎶 | Track **${track.title}** queued!`);
+});
+
+player.on('botDisconnect', queue => {
+  queue.metadata.send('❌ | I was manually disconnected from the voice channel, clearing queue!');
+});
+
+player.on('channelEmpty', queue => {
+  queue.metadata.send('❌ | Nobody is in the voice channel, leaving...Sigh');
+});
+
+player.on('queueEnd', queue => {
+  queue.metadata.send('✅ | Queue finished!');
+});
+
+client.once('ready', async () => {
+  console.log('Ready!');
+});
+
+client.on('ready', function() {
+  client.user.setActivity(config.activity, { type: config.activityType });
+});
+
+client.once('reconnecting', () => {
+  console.log('Reconnecting!');
+});
+
+client.once('disconnect', () => {
+  console.log('Disconnect!');
+});
+
+client.on('messageCreate', async message => {
+  if (message.author.bot || !message.guild) return;
+  if (!client.application?.owner) await client.application?.fetch();
+
+  if (message.content === '!deploy' && message.author.id === client.application?.owner?.id) {
+    await message.guild.commands
+      .set(client.commands)
+      .then(() => {
+        message.reply('Deployed!');
+      })
+      .catch(err => {
+        message.reply('Could not deploy commands! Make sure the bot has the application.commands permission!');
+        console.error(err);
+      });
+  }
+});
+
+client.on('interactionCreate', async interaction => {
+  const command = client.commands.get(interaction.commandName.toLowerCase());
+
+  try {
+    if (interaction.commandName == 'ban' || interaction.commandName == 'userinfo') {
+      command.execute(interaction, client);
+    } else {
+      command.execute(interaction, player);
+    }
+  } catch (error) {
+    console.error(error);
+    interaction.followUp({
+      content: 'Shit I fucked that up,There was an error trying to execute that command!',
+    });
+  }
+});
+
+client.login(config.token);
