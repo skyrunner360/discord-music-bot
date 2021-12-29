@@ -64,7 +64,7 @@ To initialize "/" commands Deploy the Bot's commands using "!deploy"
 
 ## Author
 
-Rehan Shivani && Rishi Mathur [https://teriyakiboy98.github.io/WhoAmI/]
+* Rehan Shivani [https://teriyakiboy98.github.io/WhoAmI/] && * Rishi Mathur [https://github.com/skyrunner360]
 
 ## Support me and maybe watch my stream
 
