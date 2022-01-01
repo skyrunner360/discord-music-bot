@@ -1,5 +1,3 @@
-# Discord Music bot (Tested as "Edgar chan")
-
 A discord bot that plays music on your discord server.
 
 ## Table of content
@@ -69,5 +67,4 @@ To initialize "/" commands Deploy the Bot's commands using "!deploy"
 
 ## Support me and maybe watch my stream
 
-[https://streamelements.com/teriyakiboy98/tip]
-
+* At Twitch [https://streamelements.com/teriyakiboy98/tip]
