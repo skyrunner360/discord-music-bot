@@ -1,8 +1,5 @@
-# Discord Music bot
-
-A simple discord bot that helps you manage your server by providing useful commands like playing music or deleting text messages.
-
-You can find the tutorial about building a discord music bot [here](https://gabrieltanner.org/blog/dicord-music-bot). 
+# A discord Music Bot in Javascript
+A discord bot that plays music on your discord server.
 
 ## Table of content
 
@@ -10,145 +7,65 @@ You can find the tutorial about building a discord music bot [here](https://gabr
 * [Getting started](#getting-started)
 * [Common errors](#common-errors)
 * [Contributing](#contributing)
-* [Author](#author)
-* [License](#license)
+* [Author's](#author)
 
 ## Requirements
 
 - [Node](https://nodejs.org/en/) - Version 16 or higher
 - [NPM](https://www.npmjs.com/)
 - [FFMPEG](https://www.ffmpeg.org/)
-- [Docker](https://www.docker.com/) (optional)
-
-## Getting started
-
-First, make sure you have all the required tools installed on your local machine then continue with these steps.
-
-### Installation
-
-```bash
-# Clone the repository
-git clone
-
-# Enter into the directory
-cd discord-bot/
-
-# Install the dependencies
-npm install
-```
-
-## Required permissions
-
-**Important:** Make sure that your bot has the `applications.commands` application scope enabled, which can be found under the `OAuth2` tap on the [developer portal](https://discord.com/developers/applications/)
-
-### Configuration
-
-After cloning the project and installing all dependencies, you need to add your Discord API token in the config.json file.
-
-### Starting the application
-
-```bash
-node index.js
-```
-
-### Starting the application using Docker
-
-```bash
-# Build the image
-docker build --tag discordbot .
-
-# Run the image
-docker run -d discordbot
-```
 
 ## Deploying commands
 
-Before you can use the bots slash command you first need to add them to your Discord server. You can use the `!deploy` command to do so.
+To initialize "/" commands Deploy the Bot's commands using "!deploy"
 
-<img src="./assets/deploy-commands.png">
+## Commands to play music
 
-After deploying the commands you should be able to see and access them by typing a slash:
-
-<img src="./assets/commands.png">
-
-## Features & Commands
-
-> Note: The repository now uses the new Discord slash commands
-
-* 🎶 Play music from YouTube via url
+* Play music from YouTube via url
 
 `/play YOUTUBE_URL`
 
-* 🎶 Play music from using song name
+* Play music from using song name
 
 `/play SONG_NAME`
 
-* 📃 Pause music
+* Pause music
 
 `/pause`
 
-* 🎓 Resume music
+* Resume music
 
 `/resume`
 
-* 💿 Skip song
+* Skip song
 
 `/skip`
 
-* 🔇 Stop music
+* Stop music
 
 `/stop`
 
-* 🔀 Shuffle Queue
+* Shuffle Queue
 
 `/shuffle`
 
-* ↕ Move song position
+* Move song position
 
 `/move TRACK_POSITION TARGET_POSITION`
 
-* ↔️ Swap song positions
+* Swap song positions
 
 `/swap POSITION_1 POSITION_2`
 
-* ⏏️ Remove song
+* Remove song
 
 `/remove POSITION`
 
-* Now Playing (/nowplaying)
-* Get information about a user (/userinfo USER)
-* Ban a player (/ban USER)
-* Delete the latest chat messages (/purge NUM_OF_MESSAGES)
+## Author's
 
-<img src="./assets/playing_song.png">
+* Rehan Shivani [https://teriyakiboy98.github.io/WhoAmI/] &
+* Rishi Mathur [https://github.com/skyrunner360]
 
-## Common errors
+## Support me and maybe watch my stream
 
-Here is a list of common errors and how you can fix them.
-
-### Dependencies aren't up to date
-
-The packages used in this repository get updated often, especially the ytdl-core package. That is why it is always worth a try updating those if you get an error like `invalid URL: undefined` or when the bot crashes when running the play command.
-
-```bash
-npm install ytdl-core@latest
-```
-
-### FFMPEG is not installed on the machine running the bot
-
-The `play` command requires FFMPEG to be installed on the machine that is running the bot. You can download it on the official [FFMPEG website](https://www.ffmpeg.org/). Note: This isn't relevant if you use the Dockerfile because it will install FFMPEG inside of the container.
-
-## Contributing
-
-You are welcome to contribute by submitting a Pull Request to the repository.
-
-## Configfile Format
-Your config.json should be in this format: 
-
-```
-{
-    "token": "<Your Bot's Token>",
-    "activityType": "<Playing, Ideal, Do not Disturb, Watching etc..>",
-    "activity": "<Any custom message against the activity>"
-}
-```
+* On Twitch [https://streamelements.com/teriyakiboy98/tip]
